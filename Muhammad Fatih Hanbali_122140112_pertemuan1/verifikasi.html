@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Validasi Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #4c8bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #3a70c9;
+        }
+        .error {
+            color: red;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+        .success-message {
+            background-color: #dff0d8;
+            color: #3c763d;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 20px;
+            display: none;
+        }
+        input.invalid {
+            border-color: red;
+        }
+    </style>
+</head>
+<body>
+    <h1>Validasi Form</h1>
+    
+    <form id="registrationForm">
+        <div class="form-group">
+            <label for="name">Nama:</label>
+            <input type="text" id="name" name="name">
+            <div id="nameError" class="error">Nama harus lebih dari 3 karakter</div>
+        </div>
+        
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email">
+            <div id="emailError" class="error">Email tidak valid</div>
+        </div>
+        
+        <div class="form-group">
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password">
+            <div id="passwordError" class="error">Password harus minimal 8 karakter</div>
+        </div>
+        
+        <button type="submit">Daftar</button>
+    </form>
+    
+    <div id="successMessage" class="success-message">
+        Pendaftaran berhasil!
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const form = document.getElementById("registrationForm");
+            const successMessage = document.getElementById("successMessage");
+            
+            // Fungsi untuk validasi form
+            function validateForm(event) {
+                event.preventDefault();
+                
+                // Mendapatkan nilai dari form
+                const name = document.getElementById("name").value.trim();
+                const email = document.getElementById("email").value.trim();
+                const password = document.getElementById("password").value;
+                
+                // Reset tampilan error
+                resetErrors();
+                
+                // Flag untuk validasi
+                let isValid = true;
+                
+                // Validasi nama
+                if (!validateName(name)) {
+                    showError("name");
+                    isValid = false;
+                }
+                
+                // Validasi email
+                if (!validateEmail(email)) {
+                    showError("email");
+                    isValid = false;
+                }
+                
+                // Validasi password
+                if (!validatePassword(password)) {
+                    showError("password");
+                    isValid = false;
+                }
+                
+                // Jika semua validasi berhasil
+                if (isValid) {
+                    // Menampilkan pesan sukses
+                    successMessage.style.display = "block";
+                    
+                    // Reset form
+                    form.reset();
+                    
+                    // Sembunyikan pesan sukses setelah 3 detik
+                    setTimeout(function() {
+                        successMessage.style.display = "none";
+                    }, 3000);
+                }
+                
+                return isValid;
+            }
+            
+            // Validasi nama: harus lebih dari 3 karakter
+            function validateName(name) {
+                return name.length > 3;
+            }
+            
+            // Validasi email: harus format email yang valid
+            function validateEmail(email) {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return emailRegex.test(email);
+            }
+            
+            // Validasi password: minimal 8 karakter
+            function validatePassword(password) {
+                return password.length >= 8;
+            }
+            
+            // Menampilkan pesan error
+            function showError(fieldName) {
+                const field = document.getElementById(fieldName);
+                const errorElement = document.getElementById(`${fieldName}Error`);
+                
+                field.classList.add("invalid");
+                errorElement.style.display = "block";
+            }
+            
+            // Reset tampilan error
+            function resetErrors() {
+                const errorElements = document.querySelectorAll(".error");
+                const inputFields = document.querySelectorAll("input");
+                
+                errorElements.forEach(function(element) {
+                    element.style.display = "none";
+                });
+                
+                inputFields.forEach(function(field) {
+                    field.classList.remove("invalid");
+                });
+                
+                successMessage.style.display = "none";
+            }
+            
+            // Event listener untuk submit form
+            form.addEventListener("submit", validateForm);
+            
+            // Real-time validation saat input berubah
+            document.getElementById("name").addEventListener("input", function() {
+                const name = this.value.trim();
+                const errorElement = document.getElementById("nameError");
+                
+                if (validateName(name)) {
+                    this.classList.remove("invalid");
+                    errorElement.style.display = "none";
+                } else {
+                    this.classList.add("invalid");
+                    errorElement.style.display = "block";
+                }
+            });
+            
+            document.getElementById("email").addEventListener("input", function() {
+                const email = this.value.trim();
+                const errorElement = document.getElementById("emailError");
+                
+                if (validateEmail(email)) {
+                    this.classList.remove("invalid");
+                    errorElement.style.display = "none";
+                } else {
+                    this.classList.add("invalid");
+                    errorElement.style.display = "block";
+                }
+            });
+            
+            document.getElementById("password").addEventListener("input", function() {
+                const password = this.value;
+                const errorElement = document.getElementById("passwordError");
+                
+                if (validatePassword(password)) {
+                    this.classList.remove("invalid");
+                    errorElement.style.display = "none";
+                } else {
+                    this.classList.add("invalid");
+                    errorElement.style.display = "block";
+                }
+            });
+        });
+    </script>
+</body>
+</html>

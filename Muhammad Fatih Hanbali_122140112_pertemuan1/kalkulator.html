@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faith's Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+        }
+        .calculator {
+            background-color: #f5f5f5;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        #display {
+            width: 100%;
+            padding: 10px;
+            font-size: 24px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+            text-align: right;
+        }
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+        button {
+            padding: 15px;
+            font-size: 18px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #e0e0e0;
+        }
+        button:hover {
+            background-color: #d0d0d0;
+        }
+        .operator {
+            background-color: #f0ad4e;
+            color: white;
+        }
+        .operator:hover {
+            background-color: #ec971f;
+        }
+        .equals {
+            background-color: #5cb85c;
+            color: white;
+        }
+        .equals:hover {
+            background-color: #449d44;
+        }
+        .clear {
+            background-color: #d9534f;
+            color: white;
+        }
+        .clear:hover {
+            background-color: #c9302c;
+        }
+        .advanced {
+            background-color: #5bc0de;
+            color: white;
+        }
+        .advanced:hover {
+            background-color: #31b0d5;
+        }
+    </style>
+</head>
+<body>
+    <h1>Faith's Calculator</h1>
+    
+    <div class="calculator">
+        <input type="text" id="display" readonly>
+        
+        <div class="buttons">
+            <button class="clear" onclick="clearDisplay()">C</button>
+            <button class="advanced" onclick="calculateSquareRoot()">√</button>
+            <button class="advanced" onclick="calculatePower()">^</button>
+            <button class="operator" onclick="appendToDisplay('/')">/</button>
+            
+            <button onclick="appendToDisplay('7')">7</button>
+            <button onclick="appendToDisplay('8')">8</button>
+            <button onclick="appendToDisplay('9')">9</button>
+            <button class="operator" onclick="appendToDisplay('*')">*</button>
+            
+            <button onclick="appendToDisplay('4')">4</button>
+            <button onclick="appendToDisplay('5')">5</button>
+            <button onclick="appendToDisplay('6')">6</button>
+            <button class="operator" onclick="appendToDisplay('-')">-</button>
+            
+            <button onclick="appendToDisplay('1')">1</button>
+            <button onclick="appendToDisplay('2')">2</button>
+            <button onclick="appendToDisplay('3')">3</button>
+            <button class="operator" onclick="appendToDisplay('+')">+</button>
+            
+            <button onclick="appendToDisplay('0')">0</button>
+            <button onclick="appendToDisplay('.')">.</button>
+            <button class="advanced" onclick="appendToDisplay('%')">%</button>
+            <button class="equals" onclick="calculate()">=</button>
+        </div>
+    </div>
+
+    <script>
+        // Mendapatkan referensi ke elemen display
+        const display = document.getElementById("display");
+        
+        // Fungsi untuk menambahkan nilai ke display
+        function appendToDisplay(value) {
+            display.value += value;
+        }
+        
+        // Fungsi untuk menghitung hasil operasi
+        function calculate() {
+            try {
+                // Mengganti operasi modulus
+                let expression = display.value;
+                
+                // Tangani modulus terlebih dahulu
+                if (expression.includes('%')) {
+                    const parts = expression.split('%');
+                    if (parts.length === 2) {
+                        const a = parseFloat(parts[0]);
+                        const b = parseFloat(parts[1]);
+                        if (!isNaN(a) && !isNaN(b)) {
+                            display.value = a % b;
+                            return;
+                        }
+                    }
+                }
+                
+                // Mengecek apakah ada operasi pangkat (^)
+                if (expression.includes('^')) {
+                    // Memisahkan ekspresi dengan operator pangkat
+                    const parts = expression.split('^');
+                    if (parts.length === 2) {
+                        const base = parseFloat(parts[0]);
+                        const exponent = parseFloat(parts[1]);
+                        if (!isNaN(base) && !isNaN(exponent)) {
+                            display.value = Math.pow(base, exponent);
+                            return;
+                        }
+                    }
+                }
+                
+                // Evaluasi ekspresi standar
+                display.value = eval(expression);
+            } catch (error) {
+                display.value = "Error";
+            }
+        }
+        
+        // Fungsi untuk menghitung akar kuadrat
+        function calculateSquareRoot() {
+            try {
+                const value = parseFloat(display.value);
+                if (isNaN(value)) {
+                    display.value = "Error";
+                } else if (value < 0) {
+                    display.value = "Error";
+                } else {
+                    display.value = Math.sqrt(value);
+                }
+            } catch (error) {
+                display.value = "Error";
+            }
+        }
+        
+        // Fungsi untuk menghitung pangkat
+        function calculatePower() {
+            if (display.value !== "") {
+                appendToDisplay('^');
+            }
+        }
+        
+        // Fungsi untuk menghapus display
+        function clearDisplay() {
+            display.value = "";
+        }
+    </script>
+</body>
+</html>
